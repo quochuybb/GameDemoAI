@@ -9,8 +9,8 @@ public class EnemyMovement : MonoBehaviour
     public float UpdateSpeed = 0.1f; // how frequently to recalculate path based on Target transform's position
 
     [Header("Door Interaction")]
-    [SerializeField] private float doorDetectDistance = 2.5f;  // how far ahead to detect doors
-    [SerializeField] private LayerMask doorLayer;              // layer of door objects
+    [SerializeField] private float doorDetectDistance = 2.5f;
+    [SerializeField] private LayerMask doorLayer;            
 
     private NavMeshAgent Agent;
 
@@ -26,7 +26,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        //TryOpenDoor();
+        TryOpenDoor();
     }
 
     private IEnumerator FollowTarget()
@@ -43,8 +43,6 @@ public class EnemyMovement : MonoBehaviour
 
     private void TryOpenDoor()
     {
-        // Use the agent's desired velocity as raycast direction
-        // This is the actual direction the agent wants to move, not where it's facing
         Vector3 moveDirection = Agent.desiredVelocity.normalized;
 
         if (moveDirection.sqrMagnitude < 0.01f) return; // Not moving
