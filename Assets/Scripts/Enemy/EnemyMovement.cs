@@ -5,8 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyMovement : MonoBehaviour
 {
-    public Transform Target;
-    public float UpdateSpeed = 0.1f; 
+
 
     [Header("Door Interaction")]
     [SerializeField] private float doorDetectDistance = 2.5f;
@@ -24,10 +23,6 @@ public class EnemyMovement : MonoBehaviour
         Agent.autoTraverseOffMeshLink = false; 
     }
 
-    private void Start()
-    {
-        StartCoroutine(FollowTarget());
-    }
 
     private void Update()
     {
@@ -42,19 +37,6 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private IEnumerator FollowTarget()
-    {
-        WaitForSeconds Wait = new WaitForSeconds(UpdateSpeed);
-
-        while (enabled)
-        {
-            if (Target != null && !isWaitingForDoor && !isCrossingLink)
-            {
-                Agent.SetDestination(Target.transform.position);
-            }
-            yield return Wait;
-        }
-    }
 
     private void TryOpenDoorWithRaycast()
     {
