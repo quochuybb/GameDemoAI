@@ -60,7 +60,7 @@ public partial class NavigateToPosAction : Action
             
             if (stuckTimer >= stuckTime.Value)
             {
-                Debug.Log("Monster got stuck! Redirecting to a new point...");
+                Debug.Log("Monster stuck! Redirecting");
                 return Status.Failure; 
             }
         }

@@ -6,18 +6,22 @@ using UnityEngine.AI;
 public class EnemyDoorInteractor : MonoBehaviour
 {
     [Header("Door Interaction")]
-    [SerializeField] private float doorDetectDistance = 2.5f;
+    [SerializeField] private float doorDetectDistance;
     [SerializeField] private LayerMask doorLayer;   
-    [SerializeField] private float timeToWaitForDoor = 1.2f;         
-    [SerializeField] private float distanceToCloseDoor = 2.0f;
-    [SerializeField] private float closeDoorBehindPercent=0.5f;
-
+    [SerializeField] private float timeToWaitForDoor;         
+    [SerializeField] private float distanceToCloseDoor;
+    [Range(0f, 1f)]
+    [SerializeField] private float closeProbability; 
     [Header("Flag")]
     public bool isPatrolling = true; 
-    
+
+
+
     private NavMeshAgent agent;
     private bool isCrossingLink = false; 
     private bool isWaitingForDoor = false; 
+    
+    private DoorController currentlyTrackingDoor;
 
     private void Awake()
     {
@@ -50,9 +54,16 @@ public class EnemyDoorInteractor : MonoBehaviour
         {
             DoorController door = hit.collider.GetComponent<DoorController>();
 
-            if (door != null && !door.IsOpen)
+            if (door != null)
             {
-                StartCoroutine(PauseAndOpenDoor(door));
+                if (!door.IsOpen)
+                {
+                    StartCoroutine(PauseAndOpenDoor(door));
+                }
+                else if (door != currentlyTrackingDoor)
+                {
+                    StartCoroutine(CheckAndCloseDoorBehind(door));
+                }
             }
         }
     }
@@ -85,14 +96,21 @@ public class EnemyDoorInteractor : MonoBehaviour
         foreach (var col in colliders)
         {
             DoorController door = col.GetComponent<DoorController>();
-            if (door != null && !door.IsOpen)
+            if (door != null)
             {
-                door.Interact(this.gameObject); 
-                openedDoor = door;
+                if (!door.IsOpen)
+                {
+                    door.Interact(this.gameObject); 
+                    openedDoor = door;
+                }
+                else
+                {
+                    openedDoor = door;
+                }
             }
         }
 
-        if (openedDoor != null)
+        if (openedDoor != null && !openedDoor.IsOpen)
         {
             yield return new WaitForSeconds(timeToWaitForDoor); 
         }
@@ -122,9 +140,19 @@ public class EnemyDoorInteractor : MonoBehaviour
 
     private IEnumerator CheckAndCloseDoorBehind(DoorController door)
     {
-        if (!isPatrolling) yield break;
+        currentlyTrackingDoor = door;
 
-        if (Random.value > closeDoorBehindPercent) yield break;
+        if (!isPatrolling)
+        {
+            currentlyTrackingDoor = null;
+            yield break;
+        }
+
+        if (Random.value > closeProbability)
+        {
+            currentlyTrackingDoor = null;
+            yield break;
+        }
 
         while (door != null && Vector3.Distance(transform.position, door.transform.position) < distanceToCloseDoor)
         {
@@ -133,7 +161,17 @@ public class EnemyDoorInteractor : MonoBehaviour
 
         if (door != null && door.IsOpen)
         {
+            isWaitingForDoor = true;
+            agent.isStopped = true; 
+
             door.Interact(this.gameObject); 
+
+            yield return new WaitForSeconds(timeToWaitForDoor); 
+
+            agent.isStopped = false; 
+            isWaitingForDoor = false;
         }
+
+        currentlyTrackingDoor = null;
     }
 }

@@ -15,7 +15,7 @@ public partial class GetRandomPointAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> agentObject;
     [SerializeReference] public BlackboardVariable<float> radius;
-    [SerializeReference] public BlackboardVariable<Vector3> outputTarget; 
+    [SerializeReference] public BlackboardVariable<Vector3> outputTarget;
 
     protected override Status OnStart()
     {
@@ -25,16 +25,28 @@ public partial class GetRandomPointAction : Action
         }
 
         Vector3 origin = agentObject.Value.transform.position;
-        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * radius.Value;
-        randomDirection += origin;
+        Vector3 foundPosition = origin;
+        bool foundValidPoint = false;
 
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, radius.Value, NavMesh.AllAreas))
+        for (int i = 0; i < 10; i++)
         {
-            outputTarget.Value = hit.position;
-            return Status.Success;
+            Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * radius.Value;
+            Vector3 candidatePoint = origin + randomDirection;
+
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(candidatePoint, out hit, 1.0f, NavMesh.AllAreas))
+            {
+                foundPosition = hit.position;
+                foundValidPoint = true;
+                break;
+            }
         }
 
+        if (foundValidPoint)
+        {
+            outputTarget.Value = foundPosition;
+            return Status.Success;
+        }
         return Status.Failure;
     }
 }
