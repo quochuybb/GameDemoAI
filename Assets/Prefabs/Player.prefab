@@ -136,7 +136,7 @@ MonoBehaviour:
   interactionDistance: 3
   interactableLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
 --- !u!1 &5714817907415924696
 GameObject:
   m_ObjectHideFlags: 0

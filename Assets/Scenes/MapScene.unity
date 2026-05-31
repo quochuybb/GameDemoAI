@@ -8250,13 +8250,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1020099957}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.258091, y: 2, z: 8.262119}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 2.258091, y: 2.68, z: 8.98}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1020099964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8272,15 +8272,41 @@ MonoBehaviour:
   m_Graph: {fileID: -1189919054159120684, guid: 064fcd6067353c34f9e9dae2b469a42e, type: 2}
   m_BlackboardVariableOverridesList:
   - rid: 8515986551536877641
-  - rid: 8515986551741087759
   - rid: 8515986551741088006
-  - rid: 8515986551741088007
+  - rid: 4248179394672328843
+  - rid: 4248179394672328845
+  - rid: 4248179394672329034
   m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
     version: 2
     RefIds:
+    - rid: 4248179394672328843
+      type: {class: 'SharedBlackboardVariable`1[[UnityEngine.AI.NavMeshAgent, UnityEngine.AIModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1460536625398447075
+          m_Value1: 120899390510797001
+        Name: NevMeshAgent
+        m_Value: {fileID: 0}
+        m_SharedVariablesRuntimeAsset: {fileID: 3459286583590257301, guid: 064fcd6067353c34f9e9dae2b469a42e, type: 2}
+    - rid: 4248179394672328845
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 7130850415362186107
+          m_Value1: 1092911591881216924
+        Name: PatrolFindingRadius
+        m_Value: 15
+    - rid: 4248179394672329034
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 7317574336968032283
+          m_Value1: 12148723872890577677
+        Name: Player
+        m_Value: {fileID: 1516614987}
     - rid: 8515986551536877641
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -8289,14 +8315,6 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 1020099957}
-    - rid: 8515986551741087759
-      type: {class: 'BlackboardVariable`1[[UnityEngine.AI.NavMeshAgent, UnityEngine.AIModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1460536625398447075
-          m_Value1: 120899390510797001
-        Name: NevMeshAgent
-        m_Value: {fileID: 1020099959}
     - rid: 8515986551741088006
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -8305,14 +8323,6 @@ MonoBehaviour:
           m_Value1: 15283566349468355107
         Name: PatrolSpeed
         m_Value: 5
-    - rid: 8515986551741088007
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 7130850415362186107
-          m_Value1: 1092911591881216924
-        Name: PatrolFindingRadius
-        m_Value: 50
 --- !u!114 &1020099965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12769,6 +12779,11 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1516614987 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3142143263639636992, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
+  m_PrefabInstance: {fileID: 6252814127136380654}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1522523292
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34096,14 +34111,6 @@ PrefabInstance:
     - target: {fileID: 3142143263639636992, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 3142143263639636992, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6524148104681890178, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
-      propertyPath: interactableLayer.m_Bits
-      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 7145257095763481237, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
       propertyPath: m_LocalPosition.x

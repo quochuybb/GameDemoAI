@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Behavior;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,6 +18,9 @@ public partial class GetRandomPointAction : Action
     [SerializeReference] public BlackboardVariable<float> radius;
     [SerializeReference] public BlackboardVariable<Vector3> outputTarget;
 
+    private List<Vector3> visitedPoints = new List<Vector3>();
+    private int maxHistory = 15; // Nhớ 15 điểm gần nhất
+
     protected override Status OnStart()
     {
         if (agentObject == null || agentObject.Value == null)
@@ -25,10 +29,12 @@ public partial class GetRandomPointAction : Action
         }
 
         Vector3 origin = agentObject.Value.transform.position;
-        Vector3 foundPosition = origin;
+        Vector3 bestPoint = origin;
+        float bestScore = -1f;
         bool foundValidPoint = false;
 
-        for (int i = 0; i < 10; i++)
+        // Sinh ra 20 điểm ngẫu nhiên để chọn ra điểm tốt nhất
+        for (int i = 0; i < 20; i++)
         {
             Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * radius.Value;
             Vector3 candidatePoint = origin + randomDirection;
@@ -36,17 +42,48 @@ public partial class GetRandomPointAction : Action
             NavMeshHit hit;
             if (NavMesh.SamplePosition(candidatePoint, out hit, 1.0f, NavMesh.AllAreas))
             {
-                foundPosition = hit.position;
-                foundValidPoint = true;
-                break;
+                float score = CalculateExplorationScore(hit.position);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestPoint = hit.position;
+                    foundValidPoint = true;
+                }
             }
         }
 
         if (foundValidPoint)
         {
-            outputTarget.Value = foundPosition;
+            outputTarget.Value = bestPoint;
+            
+            // Lưu lại điểm này vào lịch sử
+            visitedPoints.Add(bestPoint);
+            if (visitedPoints.Count > maxHistory)
+            {
+                visitedPoints.RemoveAt(0); // Xóa điểm cũ nhất để có thể quay lại
+            }
+            
             return Status.Success;
         }
         return Status.Failure;
+    }
+
+    private float CalculateExplorationScore(Vector3 candidate)
+    {
+        // Nếu chưa đi đâu cả, điểm nào cũng là điểm tốt nhất
+        if (visitedPoints.Count == 0) return 1f;
+
+        float minDistanceToVisited = float.MaxValue;
+        foreach (var point in visitedPoints)
+        {
+            float dist = Vector3.Distance(candidate, point);
+            if (dist < minDistanceToVisited)
+            {
+                minDistanceToVisited = dist;
+            }
+        }
+        
+        // Càng xa các điểm cũ thì điểm (score) càng cao
+        return minDistanceToVisited;
     }
 }
