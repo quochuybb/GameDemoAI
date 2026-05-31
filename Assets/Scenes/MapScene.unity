@@ -8192,8 +8192,8 @@ GameObject:
   - component: {fileID: 1020099961}
   - component: {fileID: 1020099960}
   - component: {fileID: 1020099959}
-  - component: {fileID: 1020099958}
   - component: {fileID: 1020099964}
+  - component: {fileID: 1020099965}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -8201,23 +8201,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1020099958
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020099957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95fe8252d9e04b0489cdb132976fe99c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  doorDetectDistance: 1
-  doorLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  timeToWaitForDoor: 1.2
 --- !u!195 &1020099959
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8391,6 +8374,25 @@ MonoBehaviour:
           m_Value1: 1092911591881216924
         Name: PatrolFindingRadius
         m_Value: 50
+--- !u!114 &1020099965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020099957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81b98f36ce9826e2c8ac1872fe5e5718, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDoorInteractor
+  doorDetectDistance: 2
+  doorLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  timeToWaitForDoor: 1.2
+  isPatrolling: 1
+  distanceToCloseDoor: 2
 --- !u!1 &1024946890 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1248767474631093451, guid: d369d6eace77e5844b6822d8b1d751ab, type: 3}

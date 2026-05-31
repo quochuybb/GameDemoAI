@@ -3,26 +3,27 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyMovement : MonoBehaviour
+public class EnemyDoorInteractor : MonoBehaviour
 {
-
-
     [Header("Door Interaction")]
     [SerializeField] private float doorDetectDistance = 2.5f;
     [SerializeField] private LayerMask doorLayer;   
-    [Tooltip("How long the monster waits for the door animation to finish before moving")]
     [SerializeField] private float timeToWaitForDoor = 1.2f;         
+    [SerializeField] private float distanceToCloseDoor = 2.0f;
+    [SerializeField] private float closeDoorBehindPercent=0.5f;
 
-    private NavMeshAgent Agent;
+    [Header("Flag")]
+    public bool isPatrolling = true; 
+    
+    private NavMeshAgent agent;
     private bool isCrossingLink = false; 
     private bool isWaitingForDoor = false; 
 
     private void Awake()
     {
-        Agent = GetComponent<NavMeshAgent>();
-        Agent.autoTraverseOffMeshLink = false; 
+        agent = GetComponent<NavMeshAgent>();
+        agent.autoTraverseOffMeshLink = false; 
     }
-
 
     private void Update()
     {
@@ -30,17 +31,16 @@ public class EnemyMovement : MonoBehaviour
         {
             TryOpenDoorWithRaycast();
 
-            if (Agent.isOnOffMeshLink && !isCrossingLink)
+            if (agent.isOnOffMeshLink && !isCrossingLink)
             {
                 StartCoroutine(HandleLinkTraversal());
             }
         }
     }
 
-
     private void TryOpenDoorWithRaycast()
     {
-        Vector3 moveDirection = Agent.desiredVelocity.normalized;
+        Vector3 moveDirection = agent.desiredVelocity.normalized;
 
         if (moveDirection.sqrMagnitude < 0.01f) return; 
 
@@ -52,23 +52,24 @@ public class EnemyMovement : MonoBehaviour
 
             if (door != null && !door.IsOpen)
             {
-                StartCoroutine(PauseAndOpenDoor(door.gameObject));
+                StartCoroutine(PauseAndOpenDoor(door));
             }
         }
     }
 
-
-    private IEnumerator PauseAndOpenDoor(GameObject doorObj)
+    private IEnumerator PauseAndOpenDoor(DoorController door)
     {
         isWaitingForDoor = true;
-        Agent.isStopped = true;
+        agent.isStopped = true;
 
-        OpenDoorObject(doorObj);
+        door.Interact(this.gameObject); 
 
         yield return new WaitForSeconds(timeToWaitForDoor);
 
-        Agent.isStopped = false; 
+        agent.isStopped = false; 
         isWaitingForDoor = false;
+
+        StartCoroutine(CheckAndCloseDoorBehind(door));
     }
 
     private IEnumerator HandleLinkTraversal()
@@ -76,9 +77,9 @@ public class EnemyMovement : MonoBehaviour
         isCrossingLink = true;
         isWaitingForDoor = true; 
 
-        OffMeshLinkData linkData = Agent.currentOffMeshLinkData;
+        OffMeshLinkData linkData = agent.currentOffMeshLinkData;
         
-        bool hadToOpenDoor = false;
+        DoorController openedDoor = null;
         Collider[] colliders = Physics.OverlapSphere(linkData.endPos, 3, doorLayer);
         
         foreach (var col in colliders)
@@ -86,41 +87,53 @@ public class EnemyMovement : MonoBehaviour
             DoorController door = col.GetComponent<DoorController>();
             if (door != null && !door.IsOpen)
             {
-                OpenDoorObject(col.gameObject);
-                hadToOpenDoor = true;
+                door.Interact(this.gameObject); 
+                openedDoor = door;
             }
         }
 
-        if (hadToOpenDoor)
+        if (openedDoor != null)
         {
             yield return new WaitForSeconds(timeToWaitForDoor); 
         }
 
-        Vector3 endPos = linkData.endPos + Vector3.up * Agent.baseOffset;
+        Vector3 endPos = linkData.endPos + Vector3.up * agent.baseOffset;
 
         while (transform.position != endPos)
         {
             transform.position = Vector3.MoveTowards(
                 transform.position, 
                 endPos, 
-                Agent.speed * Time.deltaTime
+                agent.speed * Time.deltaTime
             );
             yield return null;
         }
 
-        Agent.CompleteOffMeshLink();
+        agent.CompleteOffMeshLink();
         
         isCrossingLink = false;
         isWaitingForDoor = false;
+
+        if (openedDoor != null)
+        {
+            StartCoroutine(CheckAndCloseDoorBehind(openedDoor));
+        }
     }
 
-    private void OpenDoorObject(GameObject doorObj)
+    private IEnumerator CheckAndCloseDoorBehind(DoorController door)
     {
-        DoorController door = doorObj.GetComponent<DoorController>();
+        if (!isPatrolling) yield break;
 
-        if (door != null && !door.IsOpen)
+        if (Random.value > closeDoorBehindPercent) yield break;
+
+        while (door != null && Vector3.Distance(transform.position, door.transform.position) < distanceToCloseDoor)
         {
-            door.Interact(this.gameObject);
+            yield return null; 
+        }
+
+        if (door != null && door.IsOpen)
+        {
+            door.Interact(this.gameObject); 
         }
     }
 }
