@@ -7,13 +7,11 @@ public class DoorController : MonoBehaviour, IInteractable
 {
     [Header("Door Settings")]
     [SerializeField] private bool isOpen = false;
+    [SerializeField] private bool isDirection =true;
 
     private Animator animator;
-    private int animBoolID;
-
-    // Save original transform to prevent animation curves from moving the door
-    private Vector3 originalLocalPosition;
-    private Quaternion originalLocalRotation;
+    private int animIsOpenBoolID;
+    private int animIs270BoolID;
 
     public bool IsOpen => isOpen;
 
@@ -21,31 +19,23 @@ public class DoorController : MonoBehaviour, IInteractable
     {
         animator = GetComponent<Animator>();
         animator.applyRootMotion = false;
-        animBoolID = Animator.StringToHash("IsOpen");
+        animIsOpenBoolID = Animator.StringToHash("IsOpen");
+        animIs270BoolID=Animator.StringToHash("IsDirection");
 
-        // Store the original position/rotation before any animation plays
-        originalLocalPosition = transform.localPosition;
-        originalLocalRotation = transform.localRotation;
-
-        animator.SetBool(animBoolID, isOpen);
-    }
-
-    private void LateUpdate()
-    {
-        // Force the door back to its original position every frame
-        // This prevents animation curves from teleporting the door
-        transform.localPosition = originalLocalPosition;
+        animator.SetBool(animIs270BoolID,isDirection);
+        animator.SetBool(animIs270BoolID, isOpen);
     }
 
     public bool Interact(GameObject interactor)
     {
-        DoorToggle(interactor);
+        DoorToggle();
         return true;
     }
 
-    private void DoorToggle(GameObject interactor)
+    private void DoorToggle()
     {
         isOpen = !isOpen;
-        animator.SetBool(animBoolID, isOpen);
+        animator.SetBool(animIs270BoolID,isDirection);
+        animator.SetBool(animIsOpenBoolID, isOpen);
     }
 }

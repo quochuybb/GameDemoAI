@@ -26,7 +26,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        TryOpenDoor();
+        //TryOpenDoor();
     }
 
     private IEnumerator FollowTarget()
