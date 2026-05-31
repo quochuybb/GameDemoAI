@@ -12,6 +12,7 @@ public class InputManager : MonoBehaviour
 
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
+    public bool RunInput { get; private set; }
 
     private void Awake()
     {
@@ -29,6 +30,9 @@ public class InputManager : MonoBehaviour
 
         playerInput.Gameplay.Look.performed += ctx => LookInput = ctx.ReadValue<Vector2>();
         playerInput.Gameplay.Look.canceled += ctx => LookInput = Vector2.zero;
+
+        playerInput.Gameplay.Run.performed += ctx => RunInput = true;
+        playerInput.Gameplay.Run.canceled += ctx => RunInput = false;
 
         playerInput.Gameplay.Interact.performed += Interact_Performed;
     }

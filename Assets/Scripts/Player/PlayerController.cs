@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -9,9 +10,17 @@ public class PlayerController : MonoBehaviour
     private float xRotation = 0f;
 
     [Header("Movement Settings")]
-    public float moveSpeed = 5f;
+    public float walkSpeed = 5f;
+    public float sprintSpeed = 10f; // Chạy lẹ hơn (từ 8 lên 10)
     public float gravity = -9.81f; 
     
+    [Header("Stamina Settings")]
+    public float maxStamina = 100f;
+    public float staminaDrainRate = 33f; // Tụt nhanh hơn (chỉ chạy được 3 giây là cạn 100)
+    public float staminaRegenRate = 15f;
+    [HideInInspector] public float currentStamina;
+    private bool isExhausted = false;
+
     private float velocityY; 
 
     private CharacterController controller;
@@ -23,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        currentStamina = maxStamina;
     }
 
     void Update()
@@ -48,6 +58,38 @@ public class PlayerController : MonoBehaviour
             inputDir = InputManager.Instance.MoveInput;
         }
 
+        bool isMoving = inputDir.magnitude > 0.1f;
+        bool isSprintPressed = InputManager.Instance != null && InputManager.Instance.RunInput;
+        
+        // Hồi phục 20% mới cho phép chạy lại nếu đã kiệt sức
+        if (isExhausted && currentStamina > maxStamina * 0.2f)
+        {
+            isExhausted = false;
+        }
+
+        bool isSprinting = isMoving && isSprintPressed && !isExhausted;
+
+        // Xử lý Stamina
+        if (isSprinting)
+        {
+            currentStamina -= staminaDrainRate * Time.deltaTime;
+            if (currentStamina <= 0f)
+            {
+                currentStamina = 0f;
+                isExhausted = true;
+                isSprinting = false;
+            }
+        }
+        else
+        {
+            if (currentStamina < maxStamina)
+            {
+                currentStamina += staminaRegenRate * Time.deltaTime;
+                if (currentStamina > maxStamina) currentStamina = maxStamina;
+            }
+        }
+
+        float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
         Vector3 move = (transform.right * inputDir.x) + (transform.forward * inputDir.y);
 
         if (controller.isGrounded && velocityY < 0)
@@ -56,7 +98,7 @@ public class PlayerController : MonoBehaviour
         }
         velocityY += gravity * Time.deltaTime;
 
-        Vector3 finalVelocity = (move * moveSpeed) + (Vector3.up * velocityY);
+        Vector3 finalVelocity = (move * currentSpeed) + (Vector3.up * velocityY);
         controller.Move(finalVelocity * Time.deltaTime); 
     }
 }
