@@ -11,7 +11,7 @@ public class DoorController : MonoBehaviour, IInteractable
 
     private Animator animator;
     private int animIsOpenBoolID;
-    private int animIs270BoolID;
+    private int animIsDirectionBoolID;
 
     public bool IsOpen => isOpen;
 
@@ -20,10 +20,10 @@ public class DoorController : MonoBehaviour, IInteractable
         animator = GetComponent<Animator>();
         animator.applyRootMotion = false;
         animIsOpenBoolID = Animator.StringToHash("IsOpen");
-        animIs270BoolID=Animator.StringToHash("IsDirection");
+        animIsDirectionBoolID=Animator.StringToHash("IsDirection");
 
-        animator.SetBool(animIs270BoolID,isDirection);
-        animator.SetBool(animIs270BoolID, isOpen);
+        animator.SetBool(animIsDirectionBoolID,isDirection);
+        animator.SetBool(animIsOpenBoolID, isOpen);
     }
 
     public bool Interact(GameObject interactor)
@@ -35,7 +35,6 @@ public class DoorController : MonoBehaviour, IInteractable
     private void DoorToggle()
     {
         isOpen = !isOpen;
-        animator.SetBool(animIs270BoolID,isDirection);
         animator.SetBool(animIsOpenBoolID, isOpen);
     }
 }
