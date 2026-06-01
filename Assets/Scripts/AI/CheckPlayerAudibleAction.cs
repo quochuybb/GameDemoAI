@@ -19,7 +19,7 @@ public partial class CheckPlayerAudibleAction : Action
 
     private Vector3 lastTargetPos;
     private bool isInitialized = false;
-    private float moveThreshold = 0.05f; // Di chuyển hơn mức này trong 1 frame thì tính là có tiếng động
+    private float moveThreshold = 0.02f; 
 
     protected override Status OnStart()
     {
@@ -29,31 +29,56 @@ public partial class CheckPlayerAudibleAction : Action
             return Status.Failure;
         }
 
-        // Nếu mới chạy lần đầu, lưu lại vị trí ban đầu của Player
+        // Lấy Component Gizmo từ Agent để đồng bộ hóa
+        var hearingGizmo = Agent.Value.GetComponent<MonsterHearingGizmo>();
+        if (hearingGizmo != null)
+        {
+            hearingGizmo.hearingRadius = HearingRadius.Value;
+        }
+
+        // Khởi tạo vị trí ban đầu của Player nếu là frame đầu tiên
         if (!isInitialized)
         {
             lastTargetPos = Target.Value.transform.position;
             isInitialized = true;
-            return Status.Failure; // Cần đợi frame tiếp theo để so sánh
+            if (hearingGizmo != null) hearingGizmo.isHearingSomething = false;
+            return Status.Failure;
         }
 
-        float distToTarget = Vector3.Distance(Agent.Value.transform.position, Target.Value.transform.position);
-        float targetMovedDist = Vector3.Distance(Target.Value.transform.position, lastTargetPos);
+        Vector3 agentPos = Agent.Value.transform.position;
+        Vector3 targetPos = Target.Value.transform.position;
 
-        // Cập nhật lại vị trí cho lần check sau
-        lastTargetPos = Target.Value.transform.position;
+        float distToTarget = Vector3.Distance(agentPos, targetPos);
+        float targetMovedDist = Vector3.Distance(targetPos, lastTargetPos);
 
-        // Bỏ qua nếu đứng quá xa
-        if (distToTarget > HearingRadius.Value) return Status.Failure;
+        // Lưu lại vị trí hiện tại để so sánh cho frame kế tiếp
+        lastTargetPos = targetPos;
 
-        // Nếu Player có sự dịch chuyển đáng kể (phát ra tiếng động)
+        // 1. Kiểm tra nếu Player đứng ngoài bán kính thính giác
+        if (distToTarget > HearingRadius.Value)
+        {
+            if (hearingGizmo != null) hearingGizmo.isHearingSomething = false;
+            return Status.Failure;
+        }
+
+        // 2. Kiểm tra xem Player có đang di chuyển thực sự để tạo tiếng động không
         if (targetMovedDist > moveThreshold)
         {
-            // Lưu lại vị trí phát ra tiếng động vào Blackboard
-            OutputPos.Value = Target.Value.transform.position;
+            // Lưu lại vị trí phát ra âm thanh vào Blackboard công cộng
+            OutputPos.Value = targetPos;
+
+            // Đồng bộ sang hệ thống vẽ Gizmo
+            if (hearingGizmo != null)
+            {
+                hearingGizmo.isHearingSomething = true;
+                hearingGizmo.lastHeardPosition = targetPos;
+            }
+
             return Status.Success;
         }
 
+        // Nếu Player đứng im (không tạo tiếng động)
+        if (hearingGizmo != null) hearingGizmo.isHearingSomething = false;
         return Status.Failure;
     }
 }
