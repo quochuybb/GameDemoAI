@@ -95,27 +95,44 @@ public class PlayerController : MonoBehaviour
         Vector3 finalVelocity = (move * currentSpeed) + (Vector3.up * velocityY);
         controller.Move(finalVelocity * Time.deltaTime); 
 
-        if (playerAudioPingSet != null)
-        {
-            playerAudioPingSet.Clear(); 
-
-            if (isMoving && controller.isGrounded)
+            if (playerAudioPingSet != null)
             {
-                footstepTimer -= Time.deltaTime;
-
-                if (footstepTimer <= 0f)
+                if (isMoving)
                 {
-                    float currentAudioRadius = isSprinting ? sprintAudioRadius : walkAudioRadius;
+                    footstepTimer -= Time.deltaTime;
+                    if (footstepTimer <= 0f)
+                    {
+                        playerAudioPingSet.Clear();
+                        float currentAudioRadius = isSprinting ? sprintAudioRadius : walkAudioRadius;
+                        footstepTimer = isSprinting ? sprintStepInterval : walkStepInterval;
+                        playerAudioPingSet.AddPing(transform.position, currentAudioRadius);
+                        
+                    }
+                }
+                else
+                {
+                    playerAudioPingSet.Clear();
                     
-                    playerAudioPingSet.AddPing(transform.position, currentAudioRadius);
-                    Debug.Log("AddedPing");
-                    footstepTimer = isSprinting ? sprintStepInterval : walkStepInterval;
+                    footstepTimer = isSprintPressed ? sprintStepInterval : walkStepInterval;
                 }
             }
-            else
-            {
-                footstepTimer = 0f; 
-            }
+    }
+    private void OnDrawGizmos()
+    {
+        if (playerAudioPingSet == null || playerAudioPingSet.Pings == null) return;
+
+        for (int i = 0; i < playerAudioPingSet.Pings.Count; i++)
+        {
+            AudioPing ping = playerAudioPingSet.Pings[i];
+
+            Gizmos.color = new Color(1.0f, 0.6f, 0.0f, 0.15f);
+            Gizmos.DrawSphere(ping.position, ping.radius);
+
+            Gizmos.color = new Color(1.0f, 0.6f, 0.0f, 0.6f);
+            Gizmos.DrawWireSphere(ping.position, ping.radius);
+
+            Gizmos.color = Color.orange;
+            Gizmos.DrawSphere(ping.position, 0.15f);
         }
     }
 }

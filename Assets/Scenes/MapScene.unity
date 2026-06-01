@@ -8312,8 +8312,8 @@ GameObject:
   - component: {fileID: 1020099959}
   - component: {fileID: 1020099964}
   - component: {fileID: 1020099965}
-  - component: {fileID: 1020099966}
-  - component: {fileID: 1020099967}
+  - component: {fileID: 1020099968}
+  - component: {fileID: 1020099969}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -8458,8 +8458,6 @@ MonoBehaviour:
   - rid: 4248179394672328845
   - rid: 4248179394672329034
   - rid: 2640380442728727364
-  - rid: 2640380442728727465
-  - rid: 2640380442728727466
   m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
@@ -8474,22 +8472,6 @@ MonoBehaviour:
           m_Value1: 15146968013471345990
         Name: Audio Ping Set
         m_Value: {fileID: 11400000, guid: 96ee45ddf6006b23eb5dfbe9e12cb395, type: 2}
-    - rid: 2640380442728727465
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 6786097447267597063
-          m_Value1: 654171787043416601
-        Name: HearingRange
-        m_Value: 50
-    - rid: 2640380442728727466
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1765847597603406505
-          m_Value1: 11084566807134383919
-        Name: VisionAngle
-        m_Value: 100
     - rid: 4248179394672328843
       type: {class: 'SharedBlackboardVariable`1[[UnityEngine.AI.NavMeshAgent, UnityEngine.AIModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -8551,7 +8533,7 @@ MonoBehaviour:
   distanceToCloseDoor: 3
   closeProbability: 1
   isPatrolling: 1
---- !u!114 &1020099966
+--- !u!114 &1020099968
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8560,30 +8542,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1020099957}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6179787d5cab38eb8891f5436a0f2933, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c12114e42c7767f58fc76281492c8dc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MonsterPerceptionGizmo
-  viewDistance: 15
-  viewAngle: 100
-  eyeHeight: 1.5
-  target: {fileID: 1516614990}
-  canSeePlayer: 0
---- !u!114 &1020099967
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020099957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c14220e5f3c89523e80f21d53750bacb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MonsterHearingGizmo
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterHearing
+  audioPingSet: {fileID: 11400000, guid: 96ee45ddf6006b23eb5dfbe9e12cb395, type: 2}
   hearingRadius: 50
-  isHearingSomething: 0
-  lastHeardPosition: {x: 0, y: 0, z: 0}
-  currentSourceRadius: 0
+  navAgent: {fileID: 1020099959}
+--- !u!114 &1020099969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020099957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689ee82829d4215e795641055228baa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterVision
+  viewDistance: 15
+  viewAngle: 120
+  eyeHeight: 1.5
 --- !u!43 &1044589673
 Mesh:
   m_ObjectHideFlags: 0
@@ -13139,11 +13118,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf152db06766d9f48b3341f45c0fed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
---- !u!4 &1516614990 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7145257095763481237, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
-  m_PrefabInstance: {fileID: 6252814127136380654}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1522523292
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34584,9 +34558,17 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6964749694884206984, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
+      propertyPath: walkStepInterval
+      value: 100000
+      objectReference: {fileID: 0}
+    - target: {fileID: 6964749694884206984, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
       propertyPath: playerAudioPingSet
       value: 
       objectReference: {fileID: 11400000, guid: 96ee45ddf6006b23eb5dfbe9e12cb395, type: 2}
+    - target: {fileID: 6964749694884206984, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
+      propertyPath: sprintStepInterval
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 7145257095763481237, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.36598
