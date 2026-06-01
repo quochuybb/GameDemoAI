@@ -95,27 +95,34 @@ public class PlayerController : MonoBehaviour
         Vector3 finalVelocity = (move * currentSpeed) + (Vector3.up * velocityY);
         controller.Move(finalVelocity * Time.deltaTime); 
 
-            if (playerAudioPingSet != null)
+        if (playerAudioPingSet != null)
+        {
+            if (isMoving)
             {
-                if (isMoving)
+                float currentInterval = isSprinting ? sprintStepInterval : walkStepInterval;
+
+                if (footstepTimer > currentInterval)
                 {
-                    footstepTimer -= Time.deltaTime;
-                    if (footstepTimer <= 0f)
-                    {
-                        playerAudioPingSet.Clear();
-                        float currentAudioRadius = isSprinting ? sprintAudioRadius : walkAudioRadius;
-                        footstepTimer = isSprinting ? sprintStepInterval : walkStepInterval;
-                        playerAudioPingSet.AddPing(transform.position, currentAudioRadius);
-                        
-                    }
+                    footstepTimer = currentInterval;
                 }
-                else
+
+                footstepTimer -= Time.deltaTime;
+                if (footstepTimer <= 0f)
                 {
                     playerAudioPingSet.Clear();
+                    float currentAudioRadius = isSprinting ? sprintAudioRadius : walkAudioRadius;
+
+                    footstepTimer = currentInterval;
                     
-                    footstepTimer = isSprintPressed ? sprintStepInterval : walkStepInterval;
+                    playerAudioPingSet.AddPing(transform.position, currentAudioRadius);
                 }
             }
+            else
+            {
+                playerAudioPingSet.Clear();
+                footstepTimer = isSprintPressed ? sprintStepInterval : walkStepInterval;
+            }
+        }
     }
     private void OnDrawGizmos()
     {

@@ -34559,7 +34559,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6964749694884206984, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
       propertyPath: walkStepInterval
-      value: 100000
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 6964749694884206984, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
       propertyPath: playerAudioPingSet
