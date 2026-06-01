@@ -9,13 +9,13 @@ using Unity.Properties;
 [NodeDescription(
     name: "Navigate To Pos", 
     category: "Action/Navigation", 
-    story: "[agent] navigates to [targetPosition], redirects if stuck for [stuckTime]s",
+    story: "[agent] navigates to [targetPosition] at [speed], redirects if stuck for [stuckTime]s",
     id: "navigate_to_pos")]
 public partial class NavigateToPosAction : Action
 {
     [SerializeReference] public BlackboardVariable<NavMeshAgent> agent;
     [SerializeReference] public BlackboardVariable<Vector3> targetPosition;
-    
+    [SerializeReference] public BlackboardVariable<float> speed ;
     [SerializeReference] public BlackboardVariable<float> stuckTime = new BlackboardVariable<float>(2.0f);
 
     private Vector3 lastPosition;
@@ -24,7 +24,7 @@ public partial class NavigateToPosAction : Action
     protected override Status OnStart()
     {
         if (agent == null || agent.Value == null) return Status.Failure;
-        
+        agent.Value.speed=speed;
         agent.Value.SetDestination(targetPosition.Value);
 
         lastPosition = agent.Value.transform.position;

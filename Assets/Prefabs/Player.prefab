@@ -42,7 +42,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7145257095763481237}
   - component: {fileID: 6894689542040493282}
-  - component: {fileID: 8540242072882162261}
   - component: {fileID: 6964749694884206984}
   - component: {fileID: 6524148104681890178}
   m_Layer: 0
@@ -93,18 +92,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8540242072882162261
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3142143263639636992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b29a3798b8e99c0481f0f15a83ce00a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputManager
 --- !u!114 &6964749694884206984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,9 +104,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf152db06766d9f48b3341f45c0fed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  playerAudioPingSet: {fileID: 0}
+  walkAudioRadius: 5
+  sprintAudioRadius: 12
+  walkStepInterval: 0.3
+  sprintStepInterval: 0.1
   cameraRoot: {fileID: 8495340855850126674}
-  moveSpeed: 10
+  walkSpeed: 5
+  sprintSpeed: 10
   gravity: -9.81
+  maxStamina: 100
+  staminaDrainRate: 33
+  staminaRegenRate: 15
+  currentStamina: 0
 --- !u!114 &6524148104681890178
 MonoBehaviour:
   m_ObjectHideFlags: 0
