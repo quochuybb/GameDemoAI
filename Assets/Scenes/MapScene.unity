@@ -8457,12 +8457,39 @@ MonoBehaviour:
   - rid: 4248179394672328843
   - rid: 4248179394672328845
   - rid: 4248179394672329034
+  - rid: 2640380442728727364
+  - rid: 2640380442728727465
+  - rid: 2640380442728727466
   m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
     version: 2
     RefIds:
+    - rid: 2640380442728727364
+      type: {class: 'BlackboardVariable`1[[AudioPingSet, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 13849429844461002499
+          m_Value1: 15146968013471345990
+        Name: Audio Ping Set
+        m_Value: {fileID: 11400000, guid: 96ee45ddf6006b23eb5dfbe9e12cb395, type: 2}
+    - rid: 2640380442728727465
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 6786097447267597063
+          m_Value1: 654171787043416601
+        Name: HearingRange
+        m_Value: 50
+    - rid: 2640380442728727466
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1765847597603406505
+          m_Value1: 11084566807134383919
+        Name: VisionAngle
+        m_Value: 100
     - rid: 4248179394672328843
       type: {class: 'SharedBlackboardVariable`1[[UnityEngine.AI.NavMeshAgent, UnityEngine.AIModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -8537,7 +8564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterPerceptionGizmo
   viewDistance: 15
-  viewAngle: 120
+  viewAngle: 100
   eyeHeight: 1.5
   target: {fileID: 1516614990}
   canSeePlayer: 0
@@ -8553,9 +8580,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c14220e5f3c89523e80f21d53750bacb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterHearingGizmo
-  hearingRadius: 20
+  hearingRadius: 50
   isHearingSomething: 0
   lastHeardPosition: {x: 0, y: 0, z: 0}
+  currentSourceRadius: 0
 --- !u!43 &1044589673
 Mesh:
   m_ObjectHideFlags: 0
@@ -34555,6 +34583,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6964749694884206984, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
+      propertyPath: playerAudioPingSet
+      value: 
+      objectReference: {fileID: 11400000, guid: 96ee45ddf6006b23eb5dfbe9e12cb395, type: 2}
     - target: {fileID: 7145257095763481237, guid: 4a2a574a618a1bbe78de6bb038701014, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.36598

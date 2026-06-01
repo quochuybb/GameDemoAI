@@ -5,30 +5,39 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
+    [Header("AI Hearing Bridge")]
+    [SerializeField] private AudioPingSet playerAudioPingSet; 
+    [SerializeField] private float walkAudioRadius = 5f;
+    [SerializeField] private float sprintAudioRadius = 12f;
+    [SerializeField] private float walkStepInterval = 0.3f;   
+    [SerializeField] private float sprintStepInterval = 0.1f; 
+
+
     [Header("Camera Setup")]
     public Transform cameraRoot; 
     private float xRotation = 0f;
 
     [Header("Movement Settings")]
     public float walkSpeed = 5f;
-    public float sprintSpeed = 10f; // Chạy lẹ hơn (từ 8 lên 10)
+    public float sprintSpeed = 10f; 
     public float gravity = -9.81f; 
     
     [Header("Stamina Settings")]
     public float maxStamina = 100f;
-    public float staminaDrainRate = 33f; // Tụt nhanh hơn (chỉ chạy được 3 giây là cạn 100)
+    public float staminaDrainRate = 33f; 
     public float staminaRegenRate = 15f;
     [HideInInspector] public float currentStamina;
     private bool isExhausted = false;
 
     private float velocityY; 
-
     private CharacterController controller;
+    private float footstepTimer = 0f;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
     }
+    
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -40,36 +49,24 @@ public class PlayerController : MonoBehaviour
         if (InputManager.Instance != null && cameraRoot != null)
         {
             Vector2 lookInput = InputManager.Instance.LookInput;
-
             float mouseX = lookInput.x;
             transform.Rotate(Vector3.up * mouseX);
-
-
             float mouseY = lookInput.y;
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, -80f, 80f); 
-
             cameraRoot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
 
         Vector2 inputDir = Vector2.zero;
-        if (InputManager.Instance != null)
-        {
-            inputDir = InputManager.Instance.MoveInput;
-        }
+        if (InputManager.Instance != null) inputDir = InputManager.Instance.MoveInput;
 
         bool isMoving = inputDir.magnitude > 0.1f;
         bool isSprintPressed = InputManager.Instance != null && InputManager.Instance.RunInput;
         
-        // Hồi phục 20% mới cho phép chạy lại nếu đã kiệt sức
-        if (isExhausted && currentStamina > maxStamina * 0.2f)
-        {
-            isExhausted = false;
-        }
+        if (isExhausted && currentStamina > maxStamina * 0.2f) isExhausted = false;
 
         bool isSprinting = isMoving && isSprintPressed && !isExhausted;
 
-        // Xử lý Stamina
         if (isSprinting)
         {
             currentStamina -= staminaDrainRate * Time.deltaTime;
@@ -92,13 +89,33 @@ public class PlayerController : MonoBehaviour
         float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
         Vector3 move = (transform.right * inputDir.x) + (transform.forward * inputDir.y);
 
-        if (controller.isGrounded && velocityY < 0)
-        {
-            velocityY = -2f; 
-        }
+        if (controller.isGrounded && velocityY < 0) velocityY = -2f; 
         velocityY += gravity * Time.deltaTime;
 
         Vector3 finalVelocity = (move * currentSpeed) + (Vector3.up * velocityY);
         controller.Move(finalVelocity * Time.deltaTime); 
+
+        if (playerAudioPingSet != null)
+        {
+            playerAudioPingSet.Clear(); 
+
+            if (isMoving && controller.isGrounded)
+            {
+                footstepTimer -= Time.deltaTime;
+
+                if (footstepTimer <= 0f)
+                {
+                    float currentAudioRadius = isSprinting ? sprintAudioRadius : walkAudioRadius;
+                    
+                    playerAudioPingSet.AddPing(transform.position, currentAudioRadius);
+                    Debug.Log("AddedPing");
+                    footstepTimer = isSprinting ? sprintStepInterval : walkStepInterval;
+                }
+            }
+            else
+            {
+                footstepTimer = 0f; 
+            }
+        }
     }
 }
